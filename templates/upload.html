@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+        <script src="http://code.jquery.com/jquery-1.10.2.min.js" charset="utf-8"></script>
+        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    </head>
+    <body>
+        <p title="tooltip test">oh hai</p>
+        <script type="text/javascript">
+            /*=================================================================
+                findOpacity function:
+                - find a good opacity value given a value and a max value
+                args:
+                    value: (int) the value to be divided by the max
+                    max: (int) the highest value in the set
+                return:
+                    op_value: (float) the value for opacity
+
+                example:
+                    findOpacity(500, 500)
+                    > 1
+                    findOpacity(455, 500)
+                    > .91
+            =================================================================*/
+            function findOpacity(value, max) {
+                return value / max
+            }
+            /*=================================================================
+                createSVG function:
+                - create a svg element with some attrs
+                args:
+                    id: (string) name of the id for the svg element (optional)
+                    class_name: (string) name of the class for the svg (optional)
+                returns:
+                    svg_el (element)
+
+            =================================================================*/
+            function createSVG(w, h, container_id, svg_id, class_name) {
+                d3.select('#' + container_id).append('svg').attr({
+                    'id': svg_id,
+                    'class': class_name,
+                    'width': w,
+                    'height': h
+                });
+            };
+
+            /*=================================================================
+                createRect function:
+                - create a <rect> element 
+                args:
+                    x: (string) value of the x coord
+                    y: (string) value of the y coord
+                    h: (string) the height it should be
+                    w: (string) the width it should be
+                    id: (string) id of the rect (optional)
+                    class_name: (string) class name of the rect (optional)
+                returns:
+                    rect: the <rect> element
+            =================================================================*/
+            function createRect(x, y, h, w, svg_id, opacity_v, commit_v, rect_id, class_name) {
+                d3.select('#' + svg_id).append('svg:g').append('svg:rect').attr({
+                    'id': rect_id,
+                    'class': class_name,
+                    'x': x,
+                    'y': x,
+                    'height': h,
+                    'width': w,
+                    'rx': 5,
+                    'ry': 5,
+                    'title': 'Tooltip test'
+                }).style({
+                    'fill-opacity': opacity_v,
+                    'stroke': 'black',
+                    'stroke-opacity': '1'
+                }).append('title').text(commit_v);
+            };
+
+            /*=================================================================
+                createText function:
+                - create a <text> svg element
+            =================================================================*/
+            function createText(x, y, svg_id, commit_v, fsize, fcolor) {
+                console.log(d3.select('#' + svg_id).select('g'));
+                d3.select('#' + svg_id).select('g').append('svg:text').attr({
+                    'x': x,
+                    'y': y,
+                    'font-size': fsize,
+                    'fill': fcolor
+                }).text(commit_v);
+            }
+
+
+
+            window.onload = function() {
+                d3.json('/get_json', function(data) {;
+                    for(key in data) {
+                        var div_id = 'div_' + key;
+                        var year = key;
+                        // create a div and svg for each group in the commite data
+                        d3.select('body').append('div').attr('id', div_id)
+                            .append('p').html('Commit data for ' + key);
+
+                        // then make rectangles for each entry
+                        for(key in data[key]) {
+                            var commits = data[year][key];
+                            var svg_id = div_id + '_svg_' + key;
+                            createSVG(55, 55, div_id, svg_id);
+                            // find the opacity for the rect
+                            opacity = findOpacity(commits, 500);
+                            createRect(10, 10, 40, 40, svg_id, opacity, commits);
+                            createText(20, 30, svg_id, commits, 15, 'red');
+                        }
+                    }
+                });
+            };
+        </script>
+    </body>
+</html>
