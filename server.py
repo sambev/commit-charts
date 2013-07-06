@@ -15,10 +15,10 @@ def index():
 def getJSON():
     # open the raw git log file
     logfile = open('rawgitlog.txt')
-   
-    all_data = []   # this will hold all the data (commit, author, date)
+  
+    all_data = {}
+    commit_list = []   # this will hold all the data (commit, author, date)
     total_commits = 0       
-# this will hold general date data
     date_data = {}
 
     for line in logfile:
@@ -62,11 +62,21 @@ def getJSON():
             else:
                 date_data[ts.tm_year][ts.tm_mon] += 1
         
-        all_data.append(commit_data)
+        commit_list.append(commit_data)
 
     logfile.close()
+    # get the highest number of commits by month:
+    amount_list = []
+    for year in date_data:
+        for month in date_data[year]:
+            amount_list.append(date_data[year][month])
+    
+    all_data['commit_high'] = max(amount_list)
+    all_data['date_data'] = date_data
+    all_data['total'] = total_commits
+
     # return the git log in json form 
-    return json.dumps(date_data)
+    return json.dumps(all_data)
 
 
 if __name__ == "__main__":

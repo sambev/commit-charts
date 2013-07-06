@@ -1,0 +1,8 @@
+.calendar {
+    margin: 10px;
+    width: 70px;
+    height: 85px; 
+    border-radius: 5px;
+    display: inline-block;
+    text-align: center;
+}
