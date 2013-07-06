@@ -7,8 +7,8 @@ from time import strptime
 app = Flask(__name__)
 
 @app.route("/")
-def uploadCommit():
-    return render('upload.html') 
+def index():
+    return render('index.html') 
 
 
 @app.route("/get_json")
